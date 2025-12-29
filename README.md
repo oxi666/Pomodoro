@@ -1,6 +1,10 @@
 # Pomodoro
 Copiar y pegar en php myadmin u otra base de datos:
+
+
 //////////////////////////////////////////////////////////////
+
+
 -- Crear la base de datos (ajusta el nombre según config.php)
 CREATE DATABASE IF NOT EXISTS olimpiadas_estudio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE olimpiadas_estudio;
