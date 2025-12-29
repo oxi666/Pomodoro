@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏅 OMEFL Training - Registro de Estudio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+            --math-blue: #1e3a5f;
+            --math-dark: #0a1628;
+            --accent: #00d4ff;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff3366;
+            /* Colores bandera Canarias */
+            --canarias-white: #ffffff;
+            --canarias-blue: #0055a4;
+            --canarias-yellow: #f9c816;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--math-dark);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fondo con fórmulas matemáticas */
+        /* Fondo con fórmulas matemáticas - IMAGEN */
+.math-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
+}
+
+body.formula-mode .math-background {
+    opacity: 1;
+    z-index: 1;
+    overflow-y: auto;
+}
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header con logo IMO */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.9), rgba(10, 22, 40, 0.95));
+            border-radius: 20px;
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.formula-mode header {
+            display: none;
+        }
+
+        .imo-logo {
+            width: 100px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+
+        /* Colores Canarias en lugar de anillos olímpicos */
+        .canarias-colors {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .canarias-colors span {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .color-white { background: var(--canarias-white); }
+        .color-blue { background: var(--canarias-blue); }
+        .color-yellow { background: var(--canarias-yellow); }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--canarias-white), var(--canarias-blue), var(--canarias-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        header .subtitle {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .canarias-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--canarias-white), var(--canarias-blue), var(--canarias-yellow));
+            padding: 6px 18px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: #000;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border: 2px solid var(--gold);
+        }
+
+        .formula-banner {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px 25px;
+            border-radius: 30px;
+            display: inline-block;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .date-range {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: linear-gradient(90deg, var(--math-blue), transparent, var(--math-blue));
+            border-radius: 5px;
+            display: inline-block;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Cita motivacional */
+        .motivation-quote {
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: rgba(0, 85, 164, 0.2);
+            border-left: 4px solid var(--canarias-yellow);
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+            color: #ccc;
+            font-size: 0.95rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: opacity 0.5s ease;
+            min-height: 60px;
+        }
+
+        .motivation-quote .quote-text {
+            margin-bottom: 5px;
+        }
+
+        .motivation-quote .quote-source {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        /* ========== BOTÓN MODO FÓRMULAS ========== */
+        .formula-mode-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--canarias-blue), var(--canarias-yellow));
+            color: #000;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 85, 164, 0.4);
+        }
+
+        .formula-mode-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(249, 200, 22, 0.5);
+        }
+
+        body.formula-mode .formula-mode-btn {
+            background: linear-gradient(135deg, var(--danger), #ff6b6b);
+            color: #fff;
+        }
+
+        /* ========== PANEL MINIMIZADO EN MODO FÓRMULAS ========== */
+        .mini-timers-panel {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 150px;
+            z-index: 1000;
+            background: rgba(10, 22, 40, 0.95);
+            border: 2px solid var(--canarias-blue);
+            border-radius: 15px;
+            padding: 15px 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        body.formula-mode .mini-timers-panel {
+            display: block;
+        }
+
+        .mini-timers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mini-timers-header .current-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--canarias-yellow);
+        }
+
+        .mini-timers-header .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+
+        .mini-timers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .mini-timer-card {
+            display: none;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 10px;
+            padding: 10px 15px;
+            min-width: 150px;
+        }
+
+        .mini-timer-card.active {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mini-timer-card .mini-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        .mini-timer-card .mini-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .mini-timer-card .mini-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--success);
+            margin-left: auto;
+        }
+
+        .mini-timer-card .mini-time.warning { color: var(--warning); }
+        .mini-timer-card .mini-time.danger { color: var(--danger); }
+
+        .no-active-msg {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Grid de Competidores */
+        .competitors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        body.formula-mode .competitors-grid,
+        body.formula-mode .ranking-section,
+        body.formula-mode .historial-section {
+            display: none;
+        }
+
+        .competitor-card {
+            background: linear-gradient(145deg, rgba(30, 58, 95, 0.7), rgba(10, 22, 40, 0.9));
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .competitor-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--canarias-white), var(--canarias-blue), var(--canarias-yellow));
+        }
+
+        .competitor-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+            border-color: var(--accent);
+        }
+
+        .competitor-card.active {
+            border-color: var(--success);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .competitor-card.active::before {
+            background: var(--success);
+            animation: glow-line 2s infinite;
+        }
+
+        @keyframes glow-line {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .competitor-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: rgba(0, 212, 255, 0.15);
+        }
+
+        .competitor-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #444;
+            border: 2px solid #666;
+            transition: all 0.3s;
+        }
+
+        .status-indicator.active {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 15px var(--success);
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px var(--success); }
+            50% { box-shadow: 0 0 25px var(--success), 0 0 35px var(--success); }
+        }
+
+        .competitor-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .timer-container {
+            background: #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #333;
+            position: relative;
+        }
+
+        .timer-label {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: var(--math-dark);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-align: center;
+            color: var(--success);
+            text-shadow: 0 0 20px var(--success);
+            letter-spacing: 5px;
+        }
+
+        .timer-display.warning {
+            color: var(--warning);
+            text-shadow: 0 0 20px var(--warning);
+        }
+
+        .timer-display.danger {
+            color: var(--danger);
+            text-shadow: 0 0 20px var(--danger);
+            animation: blink-danger 0.5s infinite;
+        }
+
+        @keyframes blink-danger {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .timer-progress {
+            height: 4px;
+            background: #222;
+            border-radius: 2px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .timer-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+            transition: width 1s linear;
+        }
+
+        .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+    grid-template-rows: auto auto auto; /* 3 filas */
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-unit {
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 3px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+.stat-box-racha {
+    grid-column: 1 / 3; /* Desde columna 1 hasta 3 (ocupa 2) */
+    background: linear-gradient(135deg, rgba(255, 100, 0, 0.1), rgba(255, 200, 0, 0.1));
+    border: 1px solid rgba(255, 100, 0, 0.3);
+    text-align: center;
+}
+
+.stat-box-racha .stat-value {
+    color: #ff6400;
+    font-size: 2.2rem;
+}
+
+.stat-label-small {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
+            border: 2px solid #00ff88;
+        }
+
+        .btn-start:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            transform: scale(1.02);
+        }
+
+        .btn-renew {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000;
+            border: 2px solid #00d4ff;
+        }
+
+        .btn-renew:hover {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #ff3366, #cc0033);
+            color: #fff;
+            border: 2px solid #ff3366;
+        }
+
+        .btn-stop:hover {
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.5);
+            transform: scale(1.02);
+        }
+
+        .last-activation {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #555;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Ranking */
+        .ranking-section {
+            background: linear-gradient(145deg, rgba(30, 58, 95, 0.7), rgba(10, 22, 40, 0.9));
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+        }
+
+        .ranking-section::before {
+            content: "🏆";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            background: var(--math-dark);
+            padding: 0 20px;
+        }
+
+        .ranking-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--gold);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table th {
+            font-family: 'Orbitron', sans-serif;
+            padding: 15px;
+            text-align: center;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .ranking-table td {
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ranking-table tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .medal { font-size: 2rem; }
+        .rank-position {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .rank-1 .rank-position { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
+        .rank-2 .rank-position { color: var(--silver); text-shadow: 0 0 10px var(--silver); }
+        .rank-3 .rank-position { color: var(--bronze); text-shadow: 0 0 10px var(--bronze); }
+
+        .rank-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .rank-hours {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        /* Historial */
+        .historial-section {
+            background: linear-gradient(145deg, rgba(30, 58, 95, 0.7), rgba(10, 22, 40, 0.9));
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .historial-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--accent);
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .historial-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            border-left: 3px solid var(--accent);
+        }
+
+        .historial-item .nombre {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .historial-item .fecha { color: #888; font-size: 0.9rem; }
+
+        .historial-item .tiempo {
+            text-align: right;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .toast {
+            background: rgba(0, 0, 0, 0.95);
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid var(--success);
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.5rem; }
+            .competitors-grid { grid-template-columns: 1fr; }
+            .timer-display { font-size: 2.5rem; }
+            .ranking-table th, .ranking-table td { padding: 10px 5px; font-size: 0.85rem; }
+            .historial-item { grid-template-columns: 1fr; gap: 5px; text-align: center; }
+            .historial-item .tiempo { text-align: center; }
+            .mini-timers-panel { right: 80px; left: 10px; }
+            .formula-mode-btn { padding: 10px 15px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo con fórmulas -->
+    <div class="math-background" id="mathBackground"></div>
+
+    <!-- Botón Modo Fórmulas -->
+    <button class="formula-mode-btn" id="formulaModeBtn" onclick="toggleFormulaMode()">
+        📐 Modo Fórmulas
+    </button>
+    <button class="formula-mode-btn" id="calendarModeBtn" style="top: 70px; right: 20px;">
+    Modo Calendario
+</button>
+
+
+    <!-- Panel minimizado (solo visible en modo fórmulas) -->
+    <div class="mini-timers-panel" id="miniTimersPanel">
+        <div class="mini-timers-header">
+            <span class="title">🎯 Estudiando ahora</span>
+            <span class="current-time" id="currentTime">00:00:00</span>
+        </div>
+        <div class="mini-timers-grid" id="miniTimersGrid">
+            <span class="no-active-msg" id="noActiveMsg">Nadie estudiando actualmente...</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <!-- Logo IMO -->
+            <img src="logo.jpg" alt="IMO Logo" class="imo-logo">
+            
+            <!-- Colores Canarias -->
+            <div class="canarias-colors">
+                <span class="color-white"></span>
+                <span class="color-blue"></span>
+                <span class="color-yellow"></span>
+                <span class="color-blue"></span>
+                <span class="color-white"></span>
+            </div>
+            <div id="calendarPanel" style="display:none; margin-top:30px;">
+    <div style="
+        background: linear-gradient(145deg, rgba(30,58,95,0.7), rgba(10,22,40,0.9));
+        border-radius:20px; padding:25px; border:2px solid rgba(0,212,255,0.3);
+    ">
+        <h2 style="font-family: Orbitron, sans-serif; text-transform:uppercase;
+                   letter-spacing:3px; text-align:center; color:var(--gold);">
+            Calendario de Entrenamientos
+        </h2>
+
+        <!-- Selector de mes -->
+        <div style="text-align:center; margin-bottom:20px;">
+            <select id="calendarMonthSelect" style="padding:8px 12px; border-radius:8px;">
+                <option value="2025-12">Diciembre 2025</option>
+                <option value="2026-01">Enero 2026</option>
+                <option value="2026-02">Febrero 2026</option>
+                <option value="2026-03">Marzo 2026</option>
+                <option value="2026-04">Abril 2026</option>
+                <option value="2026-06">Junio 2026</option>
+            </select>
+        </div>
+
+        <!-- Grid de días -->
+        <div id="calendarGrid" style="
+            display:grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap:8px;
+            margin-bottom:25px;
+        "></div>
+
+        <!-- Panel de edición de eventos -->
+        <div style="
+            background:rgba(0,0,0,0.5);
+            border-radius:15px;
+            padding:20px;
+            border:1px solid rgba(255,255,255,0.1);
+        ">
+            <h3 style="font-family: Orbitron, sans-serif; color:var(--accent); margin-bottom:10px;">
+                Evento seleccionado
+            </h3>
+
+            <form id="eventForm">
+                <input type="hidden" id="eventId">
+                <div style="margin-bottom:10px;">
+                    <label>Fecha: </label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label>Título: </label>
+                    <input type="text" id="eventTitle" required style="width:100%;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label>Hora (opcional): </label>
+                    <input type="time" id="eventTime">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label>Descripción: </label>
+                    <textarea id="eventDescription" rows="3" style="width:100%;"></textarea>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="submit" id="saveEventBtn" class="btn btn-start">
+                        Guardar
+                    </button>
+                    <button type="button" id="deleteEventBtn" class="btn btn-stop">
+                        Eliminar
+                    </button>
+                    <button type="button" id="newEventBtn" class="btn btn-renew">
+                        Nuevo
+                    </button>
+                </div>
+            </form>
+
+            <div id="eventList" style="margin-top:15px;"></div>
+        </div>
+    </div>
+</div>
+
+            <h1>IMO Training Canarias</h1>
+            <div class="canarias-badge">🇮🇨 Islas Canarias • España</div>
+            <p class="subtitle">Sistema de Registro de Horas de Entrenamiento Olímpico</p>
+            <div class="formula-banner">"No es tan difícil, solo son 300 trucos"</div>
+            <div class="date-range">📅 Período: 06/12/2024 → 16/01/2025 | Renovación: cada 50 min</div>
+            
+            <div class="motivation-quote" id="motivationQuote">
+                <div class="quote-text">"En China se reirían de ti si no traes medalla de oro"</div>
+                <div class="quote-source">— Motivación IMO</div>
+            </div>
+        </header>
+
+        <div class="competitors-grid" id="competitorsGrid"></div>
+
+        <div class="ranking-section">
+            <h2>Medallero Olímpico</h2>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Medalla</th>
+                        <th>Competidor</th>
+                        <th>Horas Totales</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingBody"></tbody>
+            </table>
+        </div>
+
+        <div class="historial-section">
+            <h2>📊 Registro de Sesiones</h2>
+            <div id="historialContainer"></div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API_URL = 'api.php';
+        let usuarios = [];
+        let intervalos = {};
+        let estadosActivos = {};
+        let quoteIndex = 0;
+        let formulaMode = false;
+
+        // ==================== 100 FÓRMULAS MATEMÁTICAS ====================
+        const mathFormulas = [
+            " "
+        ];
+
+        // ==================== FRASES MOTIVACIONALES ====================
+        const quotes = [
+            { text: '"No es tan difícil, solo son 300 trucos"', source: '— Leyenda IMO' },
+            { "text": "\"Tranquilo, este problema solo requiere que seas Euler por un rato\"", "source": "— Sarcasmo Olímpico" },
+  { "text": "\"Si no te sale, prueba invocar magia negra matemática\"", "source": "— Manual No Oficial IMO" },
+  { "text": "\"Cinco minutos para resolverlo… si ya sabías la solución desde antes\"", "source": "— Realismo Competitivo" },
+  { "text": "\"Fallaste otra vez, pero mira: ya tienes más práctica fallando\"", "source": "— Optimismo Sarcástico" },
+  { "text": "\"No es difícil, simplemente estás viendo todo mal… como siempre\"", "source": "— Entrenador Honesto" },
+  { "text": "\"La matemática es hermosa, especialmente cuando la ve otro, no tú\"", "source": "— Observador Pasivo" },
+  { "text": "\"Bloquéate con calma, estresarte no arregla tu falta de ideas\"", "source": "— Voz de la Experiencia" },
+  { "text": "\"Intenta todo hasta que algo funcione por accidente: metodología oficial\"", "source": "— Guía IMO Alternativa" },
+  { "text": "\"Nadie entiende la solución la primera vez. Tú tranquilo: tampoco la segunda\"", "source": "— Realidad Olímpica" },
+  { "text": "\"Perder la paciencia no ayuda, pero por lo menos te desahoga\"", "source": "— Filósofo del Concurso" },
+  { "text": "\"Hay una solución elegante… pero tú y la elegancia no se llevan bien\"", "source": "— Crítico Matemático" },
+  { "text": "\"Cuando no se te ocurra nada, piensa más fuerte. O grita, a veces sirve\"", "source": "— Superación Matemática" },
+  { "text": "\"Nada como invertir 40 minutos en la estrategia equivocada\"", "source": "— Historia Verdadera" },
+  { "text": "\"Claro que puedes resolverlo. En teoría. Muy en teoría\"", "source": "— Soporte Moral Dudoso" },
+  { "text": "\"El primer paso para resolver un problema es aceptar que estás perdido\"", "source": "— Camino del Guerrero" },
+  { "text": "\"No hay problemas imposibles; solo límites personales muy evidentes\"", "source": "— Psicología de Concursos" },
+  { "text": "\"Clave del éxito: finge que sabes lo que haces y reza un poco\"", "source": "— Estrategia Universal" },
+  { "text": "\"No compitas con genios; intenta entender el enunciado primero\"", "source": "— Consejos Brutales" },
+  { "text": "\"Cada problema tiene solución. El reto es encontrar una que no te destruya\"", "source": "— Experto en Trauma" },
+  { "text": "\"La matemática no miente… pero sí se burla de ti\"", "source": "— Realidad Matemática" },
+  { "text": "\"Si todo parece imposible, felicidades: estás entrenando para la IMO\"", "source": "— Bienvenida al Infierno" },
+  { "text": "\"El problema no es el problema; el problema eres tú con el problema\"", "source": "— Lógica Aplastante" },
+  { "text": "\"Nunca te rindas: aún puedes fallar un poco más\"", "source": "— Motivación Dudosa" },
+  { "text": "\"Dale tiempo, eventualmente te resignarás y mágicamente entenderás la solución\"", "source": "— Sabiduría Olímpica" },
+  { "text": "\"Si la inspiración no llega, mírale feo al reloj. A veces se asusta\"", "source": "— Estrategia Probada" }
+        ];
+
+        // ========== FUNCIONES ==========
+
+        function generateMathBackground() {
+            const bg = document.getElementById('mathBackground');
+            let content = '';
+            let shuffled = [...mathFormulas].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 300; i++) {
+                const formula = shuffled[i % shuffled.length];
+                content += formula + '\n\n';
+            }
+            bg.textContent = content;
+        }
+
+        function toggleFormulaMode() {
+            formulaMode = !formulaMode;
+            document.body.classList.toggle('formula-mode', formulaMode);
+            const btn = document.getElementById('formulaModeBtn');
+            btn.textContent = formulaMode ? '✖ Salir' : '📐 Modo Fórmulas';
+            if (formulaMode) {
+                updateMiniTimers();
+            }
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('es-ES');
+        }
+
+        function updateMiniTimers() {
+            const grid = document.getElementById('miniTimersGrid');
+            const noMsg = document.getElementById('noActiveMsg');
+            let hasActive = false;
+
+            usuarios.forEach(u => {
+                let miniCard = document.getElementById(`mini-${u.id}`);
+                if (!miniCard) {
+                    miniCard = document.createElement('div');
+                    miniCard.id = `mini-${u.id}`;
+                    miniCard.className = 'mini-timer-card';
+                    miniCard.innerHTML = `
+                        <div class="mini-dot"></div>
+                        <span class="mini-name">${u.nombre}</span>
+                        <span class="mini-time" id="mini-time-${u.id}">50:00</span>
+                    `;
+                    grid.appendChild(miniCard);
+                }
+
+                if (estadosActivos[u.id]) {
+                    miniCard.classList.add('active');
+                    hasActive = true;
+                } else {
+                    miniCard.classList.remove('active');
+                }
+            });
+
+            noMsg.style.display = hasActive ? 'none' : 'block';
+        }
+
+        function rotateQuote() {
+            const quoteEl = document.getElementById('motivationQuote');
+            quoteEl.style.opacity = '0';
+            setTimeout(() => {
+                quoteIndex = (quoteIndex + 1) % quotes.length;
+                quoteEl.querySelector('.quote-text').textContent = quotes[quoteIndex].text;
+                quoteEl.querySelector('.quote-source').textContent = quotes[quoteIndex].source;
+                quoteEl.style.opacity = '1';
+            }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            generateMathBackground();
+            cargarUsuarios();
+            setInterval(actualizarEstados, 5000);
+            setInterval(cargarEstadisticas, 30000);
+            setInterval(cargarHistorial, 30000);
+            setInterval(rotateQuote, 8000);
+            setInterval(updateCurrentTime, 1000);
+            updateCurrentTime();
+        });
+
+        async function cargarUsuarios() {
+            try {
+                const response = await fetch(`${API_URL}?action=get_usuarios`);
+                const data = await response.json();
+                usuarios = data.usuarios;
+                renderizarCompetidores();
+                actualizarEstados();
+                cargarEstadisticas();
+                cargarHistorial();
+            } catch (error) {
+                showToast('Error al cargar competidores', 'error');
+            }
+        }
+
+        function renderizarCompetidores() {
+    const grid = document.getElementById('competitorsGrid');
+    grid.innerHTML = usuarios.map((u, index) => `
+        <div class="competitor-card" id="card-${u.id}">
+            <div class="competitor-number">#${String(index + 1).padStart(2, '0')}</div>
+            <div class="competitor-header">
+                <div class="status-indicator" id="dot-${u.id}"></div>
+                <div class="competitor-name">${u.nombre}</div>
+            </div>
+            <div class="timer-container">
+                <span class="timer-label">Tiempo Restante</span>
+                <div class="timer-display" id="timer-${u.id}">50:00</div>
+                <div class="timer-progress">
+                    <div class="timer-progress-bar" id="progress-${u.id}" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Hoy</div>
+                    <div class="stat-value" id="hoy-${u.id}">0.00<span class="stat-unit">h</span></div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Acumulado</div>
+                    <div class="stat-value" id="acum-${u.id}">0.00<span class="stat-unit">h</span></div>
+                </div>
+                <!-- ========== NUEVAS CAJAS ========== -->
+                <div class="stat-box">
+                    <div class="stat-label">🏆 Récord</div>
+                    <div class="stat-value" id="record-${u.id}">0.00<span class="stat-unit">h</span></div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">📅 Días</div>
+                    <div class="stat-value" id="dias-${u.id}">0<span class="stat-unit">d</span></div>
+                </div>
+                <!-- ================================== -->
+            </div>
+            <!-- ========== NUEVA CAJA RACHA ========== -->
+    <div class="stat-box stat-box-racha">
+        <div class="stat-label">🔥 Racha 5:30</div>
+        <div class="stat-value" id="racha-${u.id}">0<span class="stat-unit">d</span></div>
+        <div class="stat-label-small" id="mejor-racha-${u.id}">Mejor: 0d</div>
+    </div>
+            <div class="controls" id="btns-${u.id}">
+                <button class="btn btn-start" onclick="iniciarSesion(${u.id})">▶ INICIAR</button>
+            </div>
+            <div class="last-activation" id="last-${u.id}">Sin activación reciente</div>
+        </div>
+    `).join('');
+    updateMiniTimers();
+}
+
+        async function actualizarEstados() {
+            for (const u of usuarios) {
+                try {
+                    const response = await fetch(`${API_URL}?action=get_estado&usuario_id=${u.id}`);
+                    const data = await response.json();
+                    actualizarUI(u.id, data);
+                } catch (error) {
+                    console.error('Error actualizando estado:', error);
+                }
+            }
+        }
+
+        function actualizarUI(userId, data) {
+    const card = document.getElementById(`card-${userId}`);
+    const dot = document.getElementById(`dot-${userId}`);
+    const timer = document.getElementById(`timer-${userId}`);
+    const progress = document.getElementById(`progress-${userId}`);
+    const btns = document.getElementById(`btns-${userId}`);
+    const hoy = document.getElementById(`hoy-${userId}`);
+    const acum = document.getElementById(`acum-${userId}`);
+    const last = document.getElementById(`last-${userId}`);
+    
+    // ========== NUEVOS ELEMENTOS ==========
+    const record = document.getElementById(`record-${userId}`);
+    const dias = document.getElementById(`dias-${userId}`);
+    // ======================================
+    const racha = document.getElementById(`racha-${userId}`);
+    const mejorRacha = document.getElementById(`mejor-racha-${userId}`);
+
+    const horasHoy = parseFloat(data.resumen.horas_dia || 0).toFixed(2);
+    const horasAcum = parseFloat(data.resumen.horas_acumuladas || 0).toFixed(2);
+    
+    // ========== ACTUALIZAR NUEVOS DATOS ==========
+    const recordHoras = parseFloat(data.resumen.record_horas_dia || 0).toFixed(2);
+    const diasActivos = parseInt(data.resumen.dias_activos || 0);
+    const rachaActual = parseInt(data.resumen.racha_madrugador || 0);
+    const mejorRachaValor = parseInt(data.resumen.mejor_racha_madrugador || 0);
+
+
+    hoy.innerHTML = `${horasHoy}<span class="stat-unit">h</span>`;
+    acum.innerHTML = `${horasAcum}<span class="stat-unit">h</span>`;
+    record.innerHTML = `${recordHoras}<span class="stat-unit">h</span>`;
+    dias.innerHTML = `${diasActivos}<span class="stat-unit">d</span>`;
+    racha.innerHTML = `${rachaActual}<span class="stat-unit">d</span>`;
+    mejorRacha.textContent = `Mejor: ${mejorRachaValor}d`;
+    
+    // ============================================
+
+    if (data.resumen.ultima_activacion) {
+        const fecha = new Date(data.resumen.ultima_activacion);
+        last.textContent = `Última activación: ${fecha.toLocaleString('es-ES')}`;
+    }
+
+            if (data.sesion_activa) {
+                card.classList.add('active');
+                dot.classList.add('active');
+                estadosActivos[userId] = true;
+                const restante = data.sesion_activa.tiempo_restante;
+                actualizarTimerDisplay(userId, restante);
+                btns.innerHTML = `
+                    <button class="btn btn-renew" onclick="renovarSesion(${userId})">🔄 RENOVAR</button>
+                    <button class="btn btn-stop" onclick="detenerSesion(${userId})">⏹ DETENER</button>
+                `;
+                iniciarTimerLocal(userId, restante);
+            } else {
+                card.classList.remove('active');
+                dot.classList.remove('active');
+                estadosActivos[userId] = false;
+                timer.textContent = '50:00';
+                timer.classList.remove('warning', 'danger');
+                progress.style.width = '100%';
+                progress.style.background = 'linear-gradient(90deg, var(--success), var(--accent))';
+                btns.innerHTML = `<button class="btn btn-start" onclick="iniciarSesion(${userId})">▶ INICIAR</button>`;
+                detenerTimerLocal(userId);
+                
+                // Actualizar mini timer
+                const miniTime = document.getElementById(`mini-time-${userId}`);
+                if (miniTime) miniTime.textContent = '50:00';
+            }
+            updateMiniTimers();
+        }
+
+        function actualizarTimerDisplay(userId, restante) {
+            const timer = document.getElementById(`timer-${userId}`);
+            const progress = document.getElementById(`progress-${userId}`);
+            const miniTime = document.getElementById(`mini-time-${userId}`);
+            
+            const minutos = Math.floor(restante / 60);
+            const segundos = restante % 60;
+            const tiempoStr = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+            
+            timer.textContent = tiempoStr;
+            if (miniTime) {
+                miniTime.textContent = tiempoStr;
+                miniTime.classList.remove('warning', 'danger');
+            }
+            
+            const porcentaje = (restante / (50 * 60)) * 100;
+            progress.style.width = `${porcentaje}%`;
+            
+            timer.classList.remove('warning', 'danger');
+            if (restante <= 60) {
+                timer.classList.add('danger');
+                if (miniTime) miniTime.classList.add('danger');
+                progress.style.background = 'var(--danger)';
+            } else if (restante <= 300) {
+                timer.classList.add('warning');
+                if (miniTime) miniTime.classList.add('warning');
+                progress.style.background = 'var(--warning)';
+            } else {
+                progress.style.background = 'linear-gradient(90deg, var(--success), var(--accent))';
+            }
+        }
+
+        function iniciarTimerLocal(userId, segundos) {
+            detenerTimerLocal(userId);
+            let restante = segundos;
+            intervalos[userId] = setInterval(() => {
+                restante--;
+                if (restante <= 0) {
+                    detenerTimerLocal(userId);
+                    showToast('⚠️ ¡Tiempo agotado! Sesión invalidada.', 'warning');
+                    actualizarEstados();
+                    return;
+                }
+                actualizarTimerDisplay(userId, restante);
+            }, 1000);
+        }
+
+        function detenerTimerLocal(userId) {
+            if (intervalos[userId]) {
+                clearInterval(intervalos[userId]);
+                delete intervalos[userId];
+            }
+        }
+
+        async function iniciarSesion(userId) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'iniciar_sesion');
+                formData.append('usuario_id', userId);
+                const response = await fetch(API_URL, { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`✓ ${data.mensaje}`, 'success');
+                    actualizarEstados();
+                    cargarEstadisticas();
+                }
+            } catch { showToast('Error al iniciar sesión', 'error'); }
+        }
+
+        async function renovarSesion(userId) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'renovar_sesion');
+                formData.append('usuario_id', userId);
+                const response = await fetch(API_URL, { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`✓ ${data.mensaje}`, 'success');
+                    actualizarEstados();
+                    cargarEstadisticas();
+                }
+            } catch { showToast('Error al renovar sesión', 'error'); }
+        }
+
+        async function detenerSesion(userId) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'detener_sesion');
+                formData.append('usuario_id', userId);
+                const response = await fetch(API_URL, { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.error) {
+                    showToast(data.error, 'error');
+                } else {
+                    showToast(`✓ ${data.mensaje}`, 'success');
+                    actualizarEstados();
+                    cargarEstadisticas();
+                }
+            } catch { showToast('Error al detener sesión', 'error'); }
+        }
+
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch(`${API_URL}?action=get_estadisticas`);
+                const data = await response.json();
+                const medals = ['🥇', '🥈', '🥉', '🏅'];
+                const tbody = document.getElementById('rankingBody');
+                tbody.innerHTML = data.estadisticas.map((e, i) => `
+                    <tr class="rank-${i + 1}">
+                        <td><span class="medal">${medals[i] || ''}</span><span class="rank-position">${i + 1}°</span></td>
+                        <td class="rank-name">${e.nombre}</td>
+                        <td class="rank-hours">${parseFloat(e.horas_totales).toFixed(2)}h</td>
+                    </tr>
+                `).join('');
+            } catch (error) { console.error('Error cargando estadísticas:', error); }
+        }
+
+        async function cargarHistorial() {
+            try {
+                const response = await fetch(`${API_URL}?action=get_historial`);
+                const data = await response.json();
+                const container = document.getElementById('historialContainer');
+                if (data.historial.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#555;">No hay sesiones registradas</p>';
+                    return;
+                }
+                container.innerHTML = data.historial.slice(0, 10).map(h => {
+                    const inicio = new Date(h.hora_inicio).toLocaleString('es-ES');
+                    return `
+                        <div class="historial-item">
+                            <span class="nombre">${h.nombre}</span>
+                            <span class="fecha">${inicio}</span>
+                            <span class="tiempo">+${h.minutos} min</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) { console.error('Error cargando historial:', error); }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+        let calendarMode = false;
+let eventos = [];
+let selectedDate = null;
+
+// toggle de panel
+document.getElementById('calendarModeBtn').addEventListener('click', () => {
+    calendarMode = !calendarMode;
+    document.getElementById('calendarPanel').style.display = calendarMode ? 'block' : 'none';
+
+    // si estás en modo calendario puedes, si quieres, ocultar el resto:
+    // document.querySelector('.container').style.display = calendarMode ? 'none' : 'block';
+
+    if (calendarMode) {
+        cargarEventos();
+        generarCalendario();
+    }
+});
+
+// cambio de mes
+document.getElementById('calendarMonthSelect').addEventListener('change', generarCalendario);
+
+async function cargarEventos() {
+    try {
+        const resp = await fetch(API_URL + '?action=geteventos');
+        const data = await resp.json();
+        if (data.error) {
+            showToast(data.error, 'error');
+            return;
+        }
+        eventos = data.eventos || [];
+        pintarEventosEnCalendario();
+        actualizarListaEventos();
+    } catch (e) {
+        showToast('Error al cargar eventos', 'error');
+    }
+}
+
+function diasDelMes(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+}
+
+function generarCalendario() {
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+
+    const value = document.getElementById('calendarMonthSelect').value; // YYYY-MM
+    const [yearStr, monthStr] = value.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1; // 0‑index
+
+    const firstDay = new Date(year, month, 1).getDay(); // 0=domingo
+    const daysInMonth = diasDelMes(year, month);
+
+    const weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    weekDays.forEach(d => {
+        const hd = document.createElement('div');
+        hd.textContent = d;
+        hd.style.textAlign = 'center';
+        hd.style.fontWeight = 'bold';
+        grid.appendChild(hd);
+    });
+
+    // huecos antes del primer día (adaptar a lunes‑domingo)
+    let offset = (firstDay + 6) % 7; // convertir de domingo‑primero a lunes‑primero
+    for (let i = 0; i < offset; i++) {
+        const empty = document.createElement('div');
+        grid.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day';
+        cell.style.padding = '6px';
+        cell.style.minHeight = '60px';
+        cell.style.borderRadius = '8px';
+        cell.style.border = '1px solid rgba(255,255,255,0.1)';
+        cell.style.cursor = 'pointer';
+        cell.style.fontSize = '0.85rem';
+
+        const hasEvents = eventos.some(ev => ev.fecha === dateStr);
+        cell.style.background = hasEvents
+            ? 'rgba(0,255,136,0.12)'
+            : 'rgba(0,0,0,0.4)';
+
+        cell.innerHTML = `<div style="font-weight:bold; margin-bottom:4px;">${day}</div>
+                          <div id="ev-${dateStr}" style="font-size:0.7rem; color:#0ff;"></div>`;
+
+        cell.addEventListener('click', () => seleccionarFecha(dateStr));
+
+        grid.appendChild(cell);
+    }
+
+    pintarEventosEnCalendario();
+}
+
+function pintarEventosEnCalendario() {
+    eventos.forEach(ev => {
+        const id = `ev-${ev.fecha}`;
+        const cont = document.getElementById(id);
+        if (cont) {
+            const hora = ev.hora ? ev.hora.slice(0,5) + ' ' : '';
+            const span = document.createElement('div');
+            span.textContent = `${hora}${ev.titulo}`;
+            cont.appendChild(span);
+        }
+    });
+}
+function seleccionarFecha(dateStr) {
+    selectedDate = dateStr;
+    document.getElementById('eventDate').value = dateStr;
+    limpiarFormulario();
+    cargarEventosDeFecha(dateStr);
+}
+
+function limpiarFormulario() {
+    document.getElementById('eventId').value = '';
+    document.getElementById('eventTitle').value = '';
+    document.getElementById('eventTime').value = '';
+    document.getElementById('eventDescription').value = '';
+}
+
+function cargarEventosDeFecha(dateStr) {
+    const lista = document.getElementById('eventList');
+    lista.innerHTML = '';
+
+    const deDia = eventos.filter(ev => ev.fecha === dateStr);
+    if (deDia.length === 0) {
+        lista.textContent = 'No hay eventos para este día.';
+        return;
+    }
+
+    deDia.forEach(ev => {
+        const div = document.createElement('div');
+        div.style.padding = '6px 8px';
+        div.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+        div.style.cursor = 'pointer';
+
+        const hora = ev.hora ? ev.hora.slice(0,5) + ' ' : '';
+        div.textContent = `${hora}${ev.titulo}`;
+
+        div.addEventListener('click', () => {
+            document.getElementById('eventId').value = ev.id;
+            document.getElementById('eventTitle').value = ev.titulo;
+            document.getElementById('eventDate').value = ev.fecha;
+            document.getElementById('eventTime').value = ev.hora ? ev.hora.slice(0,5) : '';
+            document.getElementById('eventDescription').value = ev.descripcion || '';
+        });
+
+        lista.appendChild(div);
+    });
+}
+
+function actualizarListaEventos() {
+    if (selectedDate) {
+        cargarEventosDeFecha(selectedDate);
+    }
+}
+document.getElementById('eventForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id    = document.getElementById('eventId').value;
+    const titulo = document.getElementById('eventTitle').value.trim();
+    const fecha  = document.getElementById('eventDate').value;
+    const hora   = document.getElementById('eventTime').value || '';
+    const desc   = document.getElementById('eventDescription').value.trim();
+
+    if (!titulo || !fecha) {
+        showToast('Título y fecha son obligatorios', 'warning');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('fecha', fecha);
+    formData.append('hora', hora);
+    formData.append('descripcion', desc);
+
+    let action = 'addevento';
+    if (id) {
+        action = 'editevento';
+        formData.append('id', id);
+    }
+    formData.append('action', action);
+
+    try {
+        const resp = await fetch(API_URL, { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.error) {
+            showToast(data.error, 'error');
+            return;
+        }
+        showToast(data.mensaje || 'Guardado', 'success');
+        await cargarEventos();
+        seleccionarFecha(fecha);
+    } catch (e2) {
+        showToast('Error al guardar evento', 'error');
+    }
+});
+
+document.getElementById('deleteEventBtn').addEventListener('click', async () => {
+    const id = document.getElementById('eventId').value;
+    if (!id) {
+        showToast('Selecciona un evento para eliminar', 'warning');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'deleteevento');
+    formData.append('id', id);
+
+    try {
+        const resp = await fetch(API_URL, { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.error) {
+            showToast(data.error, 'error');
+            return;
+        }
+        showToast(data.mensaje || 'Evento eliminado', 'success');
+        await cargarEventos();
+        limpiarFormulario();
+        actualizarListaEventos();
+    } catch (e) {
+        showToast('Error al eliminar evento', 'error');
+    }
+});
+
+document.getElementById('newEventBtn').addEventListener('click', () => {
+    limpiarFormulario();
+    if (selectedDate) {
+        document.getElementById('eventDate').value = selectedDate;
+    }
+});
+
+    </script>
+</body>
+</html>
